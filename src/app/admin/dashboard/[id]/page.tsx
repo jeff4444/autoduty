@@ -14,10 +14,11 @@ import {
   AlertCircle,
   Brain,
   Terminal,
+  Store,
 } from "lucide-react";
 import { fetchIncident, approveIncident, type IncidentDetail } from "@/lib/api";
 
-export default function IncidentDetailPage() {
+export default function AdminIncidentDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
@@ -62,7 +63,7 @@ export default function IncidentDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="admin-theme min-h-screen flex items-center justify-center bg-background text-foreground">
         <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
@@ -70,11 +71,11 @@ export default function IncidentDetailPage() {
 
   if (error || !incident) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="admin-theme min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
           <p className="text-destructive">{error || "Incident not found"}</p>
-          <Link href="/dashboard" className="text-sm text-accent hover:underline">
+          <Link href="/admin/dashboard" className="text-sm text-accent hover:underline">
             Back to Dashboard
           </Link>
         </div>
@@ -83,24 +84,31 @@ export default function IncidentDetailPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="admin-theme min-h-screen flex flex-col bg-background text-foreground">
       {/* Nav */}
       <nav className="border-b border-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/admin/dashboard" className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-accent" />
             <span className="text-lg font-bold tracking-tight">AutoDuty</span>
           </Link>
           <span className="text-muted-foreground text-sm ml-2">
-            / <Link href="/dashboard" className="hover:text-foreground transition">Dashboard</Link> / #{incident.id}
+            / <Link href="/admin/dashboard" className="hover:text-foreground transition">Dashboard</Link> / #{incident.id}
           </span>
         </div>
+        <Link
+          href="/"
+          className="text-sm text-muted-foreground hover:text-foreground transition flex items-center gap-1.5"
+        >
+          <Store className="w-4 h-4" />
+          View Store
+        </Link>
       </nav>
 
       <main className="flex-1 px-6 py-8 max-w-6xl mx-auto w-full space-y-6">
         {/* Back link */}
         <Link
-          href="/dashboard"
+          href="/admin/dashboard"
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition"
         >
           <ArrowLeft className="w-4 h-4" /> Back to incidents
@@ -185,7 +193,7 @@ export default function IncidentDetailPage() {
                 <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
                   View sandbox output
                 </summary>
-                <pre className="mt-2 text-xs bg-background border border-border rounded-lg p-3 overflow-x-auto max-h-48 overflow-y-auto font-mono">
+                <pre className="mt-2 text-xs bg-[#09090b] border border-border rounded-lg p-3 overflow-x-auto max-h-48 overflow-y-auto font-mono">
                   {incident.sandbox_output}
                 </pre>
               </details>
@@ -199,7 +207,7 @@ export default function IncidentDetailPage() {
             <AlertCircle className="w-4 h-4 text-destructive" />
             Error Traceback
           </h2>
-          <pre className="text-xs bg-background border border-border rounded-lg p-4 overflow-x-auto max-h-64 overflow-y-auto font-mono text-destructive/80">
+          <pre className="text-xs bg-[#09090b] border border-border rounded-lg p-4 overflow-x-auto max-h-64 overflow-y-auto font-mono text-destructive/80">
             {incident.traceback}
           </pre>
         </div>
@@ -283,7 +291,7 @@ export default function IncidentDetailPage() {
             <summary className="text-sm font-medium cursor-pointer hover:text-muted-foreground">
               Recent Logs ({incident.logs.length} lines)
             </summary>
-            <pre className="mt-3 text-xs bg-background border border-border rounded-lg p-4 overflow-x-auto max-h-48 overflow-y-auto font-mono text-muted-foreground">
+            <pre className="mt-3 text-xs bg-[#09090b] border border-border rounded-lg p-4 overflow-x-auto max-h-48 overflow-y-auto font-mono text-muted-foreground">
               {incident.logs.join("\n")}
             </pre>
           </details>

@@ -17,6 +17,7 @@ export interface ErrorReport {
   source_code: string;
   repo_url: string;
   branch: string;
+  related_files?: { path: string; content: string }[];
 }
 
 /**
@@ -58,12 +59,22 @@ export async function reportError(report: ErrorReport): Promise<void> {
  * Wraps an API route handler with automatic error reporting.
  * If the handler throws, the error is caught, reported to AutoDuty, and a 500 is returned.
  */
+/**
+ * Wraps an API route handler with automatic error reporting.
+ * If the handler throws, the error is caught, reported to AutoDuty, and a 500 is returned.
+ *
+ * @param handler      The API route handler function
+ * @param sourceFile   Primary source file path (relative to project root)
+ * @param relatedFiles Optional array of related file paths that may also be relevant to bugs
+ */
 export function withAutoduty(
   handler: (request: Request) => Promise<Response>,
-  sourceFile: string
+  sourceFile: string,
+  relatedFiles: string[] = []
 ) {
   // Read source code once at import time (server-side)
   const sourceCode = readSourceFile(sourceFile);
+  const related = relatedFiles.map((f) => ({ path: f, content: readSourceFile(f) }));
 
   return async (request: Request): Promise<Response> => {
     try {
@@ -80,6 +91,7 @@ export function withAutoduty(
           source_code: sourceCode,
           repo_url: REPO_URL,
           branch: "main",
+          related_files: related.length > 0 ? related : undefined,
         });
       }
 
@@ -99,6 +111,7 @@ export function withAutoduty(
         source_code: sourceCode,
         repo_url: REPO_URL,
         branch: "main",
+        related_files: related.length > 0 ? related : undefined,
       });
 
       return new Response(

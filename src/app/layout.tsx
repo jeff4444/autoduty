@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/lib/cart-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,9 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AutoDuty — Your AI SRE",
-  description:
-    "Autonomous incident remediation. AutoDuty detects errors, diagnoses root causes, verifies fixes in a sandbox, and opens PRs — so you can sleep.",
+  title: "NovaBuy — Shop the Future",
+  description: "Premium tech and lifestyle products, delivered fast.",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

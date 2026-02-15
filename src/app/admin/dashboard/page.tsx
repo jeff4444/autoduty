@@ -14,6 +14,7 @@ import {
   Loader2,
   XCircle,
   Settings,
+  Store,
 } from "lucide-react";
 import { fetchIncidents, fetchSettings, updateSettings, type IncidentSummary } from "@/lib/api";
 
@@ -63,7 +64,7 @@ const STATUS_CONFIG: Record<
   },
 };
 
-export default function DashboardPage() {
+export default function AdminDashboardPage() {
   const [incidents, setIncidents] = useState<IncidentSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -108,11 +109,11 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="admin-theme min-h-screen flex flex-col bg-background text-foreground">
       {/* Nav */}
       <nav className="border-b border-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/admin/dashboard" className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-accent" />
             <span className="text-lg font-bold tracking-tight">AutoDuty</span>
           </Link>
@@ -126,10 +127,11 @@ export default function DashboardPage() {
             <Settings className="w-4 h-4" />
           </button>
           <Link
-            href="/demo"
-            className="text-sm bg-accent hover:bg-accent/80 text-accent-foreground px-4 py-2 rounded-lg transition"
+            href="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition flex items-center gap-1.5"
           >
-            Trigger Demo
+            <Store className="w-4 h-4" />
+            View Store
           </Link>
         </div>
       </nav>
@@ -186,12 +188,9 @@ export default function DashboardPage() {
           <div className="text-center py-24 space-y-4">
             <Clock className="w-12 h-12 text-muted-foreground mx-auto" />
             <p className="text-muted-foreground">No incidents yet.</p>
-            <Link
-              href="/demo"
-              className="inline-flex items-center gap-2 text-sm bg-accent hover:bg-accent/80 text-accent-foreground px-4 py-2 rounded-lg transition"
-            >
-              Trigger a Demo Error
-            </Link>
+            <p className="text-xs text-muted-foreground">
+              Incidents will appear here automatically when errors are detected in the store.
+            </p>
           </div>
         ) : (
           <div className="border border-border rounded-xl overflow-hidden">
@@ -228,7 +227,7 @@ export default function DashboardPage() {
                     >
                       <td className="px-4 py-4">
                         <Link
-                          href={`/dashboard/${inc.id}`}
+                          href={`/admin/dashboard/${inc.id}`}
                           className="font-mono text-sm text-accent hover:underline"
                         >
                           #{inc.id}

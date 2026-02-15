@@ -1,6 +1,28 @@
 @import "tailwindcss";
 
+/* ============================================
+   Light e-commerce theme for the storefront
+   ============================================ */
 :root {
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #f9fafb;
+  --card-foreground: #111827;
+  --border: #e5e7eb;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #4f46e5;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+}
+
+/* ============================================
+   Dark theme for /admin routes
+   ============================================ */
+.admin-theme {
   --background: #09090b;
   --foreground: #fafafa;
   --card: #18181b;
