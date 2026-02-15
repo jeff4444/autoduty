@@ -23,10 +23,8 @@ function fetchUsersFromDB() {
 async function handler(request: Request) {
   const data = fetchUsersFromDB();
 
-  // BUG: `data` has shape { users: [...] }, but we access `data.data.users`
-  // This will throw: TypeError: Cannot read properties of undefined (reading 'users')
-  const users = (data as Record<string, unknown>).data as Record<string, unknown>;
-  const userList = users.users;
+  // FIXED: Access `data.users` directly since the data structure is { users: [...] }
+  const userList = data.users;
 
   return NextResponse.json({ users: userList });
 }
