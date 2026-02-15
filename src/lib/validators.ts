@@ -2,7 +2,7 @@
  * Shared validation utilities used across API routes.
  */
 
-import { EMAIL_REGEX } from "./constants";
+import { EMAIL_REGEX } from "@/lib/constants";
 
 export function isValidEmail(email: string): boolean {
   return EMAIL_REGEX.test(email);
