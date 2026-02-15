@@ -2,7 +2,7 @@
  * Shared constants used across the application.
  */
 
-export const EMAIL_REGEX = /^[a-zA-Z0-9._%\-]@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 export const STORE_NAME = "NovaBuy";
 
