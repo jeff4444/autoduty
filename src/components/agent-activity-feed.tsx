@@ -247,7 +247,6 @@ function EventItem({ event }: { event: SSEEvent }) {
 }
 
 export default function AgentActivityFeed({ events, isStreaming }: AgentActivityFeedProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
 
@@ -261,8 +260,8 @@ export default function AgentActivityFeed({ events, isStreaming }: AgentActivity
 
   // Auto-scroll to bottom only if the user hasn't scrolled up
   useEffect(() => {
-    if (isNearBottomRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isNearBottomRef.current && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [events.length]);
 
@@ -295,7 +294,6 @@ export default function AgentActivityFeed({ events, isStreaming }: AgentActivity
             <span className="text-[11px] text-muted-foreground">Thinking...</span>
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
     </div>
   );
