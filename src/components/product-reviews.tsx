@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Star, Loader2, AlertTriangle } from "lucide-react";
+import { Star, Loader2, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Review {
   id: number;
@@ -16,7 +17,7 @@ export default function ProductReviews({ productId }: { productId: number }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
 
   const loadReviews = async () => {
     setLoading(true);
@@ -37,23 +38,31 @@ export default function ProductReviews({ productId }: { productId: number }) {
   };
 
   useEffect(() => {
-    if (expanded) {
+    if (showReviews) {
       loadReviews();
     }
-  }, [expanded, productId]);
+  }, [showReviews, productId]);
 
   return (
-    <div className="border-t border-border mt-12 pt-10">
+    <div className="mt-12 border-t border-border pt-8">
       <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2 text-lg font-semibold hover:text-accent transition"
+        onClick={() => setShowReviews(!showReviews)}
+        className="flex items-center gap-2 text-lg font-semibold hover:text-nova transition-colors"
       >
-        <Star className="w-5 h-5" />
-        {expanded ? "Hide Reviews" : "Show Customer Reviews"}
+        Reviews ({reviews.length})
+        {showReviews ? (
+          <ChevronUp className="h-5 w-5" />
+        ) : (
+          <ChevronDown className="h-5 w-5" />
+        )}
       </button>
 
-      {expanded && (
-        <div className="mt-6 space-y-4">
+      {showReviews && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="mt-4 space-y-4"
+        >
           {loading && (
             <div className="flex items-center gap-2 text-muted-foreground text-sm">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading reviews...
@@ -71,41 +80,34 @@ export default function ProductReviews({ productId }: { productId: number }) {
           )}
 
           {!loading && !error && reviews.length === 0 && (
-            <p className="text-muted-foreground text-sm">No reviews yet for this product.</p>
+            <p className="text-muted-foreground">No reviews yet.</p>
           )}
 
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="border border-border rounded-lg p-4 space-y-2"
+              className="rounded-lg border border-border p-4"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">{review.author}</span>
-                  {review.verified && (
-                    <span className="text-[10px] bg-success/10 text-success px-2 py-0.5 rounded-full font-medium">
-                      Verified
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3.5 h-3.5 ${
-                        i < review.rating
-                          ? "text-warning fill-warning"
-                          : "text-border"
-                      }`}
-                    />
-                  ))}
-                </div>
+                <span className="font-semibold">{review.author}</span>
+                <span className="text-xs text-muted-foreground">{review.date}</span>
               </div>
-              <p className="text-sm text-muted-foreground">{review.comment}</p>
-              <p className="text-xs text-border">{review.date}</p>
+              <div className="flex items-center gap-1 mt-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-3.5 w-3.5 ${
+                      i < review.rating
+                        ? "fill-nova text-nova"
+                        : "text-muted-foreground/30"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">{review.comment}</p>
             </div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

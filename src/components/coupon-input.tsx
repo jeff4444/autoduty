@@ -55,22 +55,26 @@ export default function CouponInput({
   return (
     <div className="space-y-2">
       <form onSubmit={handleApply} className="flex gap-2">
-        <div className="relative flex-1">
-          <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Coupon code"
-            className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm bg-background focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          />
-        </div>
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Enter coupon code"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        />
         <button
-          type="submit"
+          type="button"
+          onClick={handleApply}
           disabled={loading || !code.trim()}
-          className="flex items-center gap-2 bg-muted hover:bg-muted/80 disabled:opacity-40 text-foreground px-4 py-2 rounded-lg text-sm font-medium transition border border-border"
+          className="inline-flex items-center justify-center gap-2 h-10 px-4 py-2 rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors disabled:pointer-events-none disabled:opacity-50"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              <Tag className="h-4 w-4 mr-1" /> Apply
+            </>
+          )}
         </button>
       </form>
 

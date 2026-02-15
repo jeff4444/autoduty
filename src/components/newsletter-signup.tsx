@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Loader2, AlertTriangle, Check } from "lucide-react";
+import { Send, Loader2, AlertTriangle } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
@@ -37,51 +38,48 @@ export default function NewsletterSignup() {
   };
 
   return (
-    <div className="bg-muted/50 border-t border-border py-10 px-6">
-      <div className="max-w-xl mx-auto text-center space-y-4">
-        <div className="flex items-center justify-center gap-2">
-          <Mail className="w-5 h-5 text-accent" />
-          <h3 className="font-semibold">Stay in the loop</h3>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Get notified about new products, deals, and tech news. No spam, ever.
-        </p>
-
-        <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            className="flex-1 px-4 py-2.5 border border-border rounded-lg text-sm bg-background focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex items-center gap-2 bg-accent hover:bg-accent/90 disabled:opacity-60 text-accent-foreground px-5 py-2.5 rounded-lg text-sm font-medium transition"
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : success ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              "Subscribe"
-            )}
-          </button>
-        </form>
-
-        {error && (
-          <div className="flex items-center gap-2 text-destructive text-sm justify-center">
-            <AlertTriangle className="w-4 h-4" />
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <p className="text-sm text-success">You&apos;re subscribed! Check your inbox.</p>
-        )}
+    <section className="bg-primary text-primary-foreground">
+      <div className="container py-16 text-center">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+          <h2 className="text-2xl font-bold">Stay in the Loop</h2>
+          <p className="mt-2 text-primary-foreground/70 max-w-md mx-auto">
+            Get notified about new products, deals, and tech insights.
+          </p>
+          {success ? (
+            <p className="mt-6 text-nova font-semibold">Thanks for subscribing!</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="mt-6 flex gap-2 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="flex-1 rounded-md px-4 py-2 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 focus:outline-none focus:ring-2 focus:ring-nova text-sm"
+                required
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex items-center justify-center gap-2 h-10 px-4 py-2 rounded-md text-sm font-semibold bg-nova text-nova-foreground hover:bg-nova/90 shadow-lg shadow-nova/25 transition-colors disabled:pointer-events-none disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-1" /> Subscribe
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+          {error && (
+            <div className="mt-4 flex items-center gap-2 text-destructive-foreground text-sm justify-center">
+              <AlertTriangle className="w-4 h-4" />
+              {error}
+            </div>
+          )}
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }
