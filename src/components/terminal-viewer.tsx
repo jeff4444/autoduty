@@ -13,11 +13,20 @@ interface TerminalViewerProps {
 
 export default function TerminalViewer({ lines, streaming = false, legacyOutput }: TerminalViewerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
 
-  // Auto-scroll on new lines
+  // Track whether the user has scrolled away from the bottom
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const threshold = 60;
+    isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+  };
+
+  // Auto-scroll only if the user hasn't scrolled up
   useEffect(() => {
-    if (scrollRef.current) {
+    if (isNearBottomRef.current && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [lines.length, streaming]);
@@ -87,7 +96,7 @@ export default function TerminalViewer({ lines, streaming = false, legacyOutput 
       </div>
 
       {/* Terminal output area */}
-      <div ref={scrollRef} className="bg-[#09090b] p-4 overflow-x-auto max-h-72 overflow-y-auto">
+      <div ref={scrollRef} onScroll={handleScroll} className="bg-[#09090b] p-4 overflow-x-auto max-h-72 overflow-y-auto">
         {filteredLines.map((line, i) => (
           <div key={i} className="group flex gap-0">
             <span className="text-[10px] text-muted-foreground/30 font-mono w-16 shrink-0 text-right pr-3 select-none opacity-0 group-hover:opacity-100 transition">

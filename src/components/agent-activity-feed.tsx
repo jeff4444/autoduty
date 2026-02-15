@@ -248,10 +248,22 @@ function EventItem({ event }: { event: SSEEvent }) {
 
 export default function AgentActivityFeed({ events, isStreaming }: AgentActivityFeedProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef(true);
 
-  // Auto-scroll to bottom when new events arrive
+  // Track whether the user has scrolled away from the bottom
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const threshold = 80;
+    isNearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+  };
+
+  // Auto-scroll to bottom only if the user hasn't scrolled up
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isNearBottomRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [events.length]);
 
   // Filter out sandbox_output events (rendered in TerminalViewer)
@@ -273,7 +285,7 @@ export default function AgentActivityFeed({ events, isStreaming }: AgentActivity
           </span>
         )}
       </div>
-      <div className="px-4 py-2 max-h-[600px] overflow-y-auto divide-y divide-border/50">
+      <div onScroll={handleScroll} ref={scrollContainerRef} className="px-4 py-2 max-h-[600px] overflow-y-auto divide-y divide-border/50">
         {visibleEvents.map((event, i) => (
           <EventItem key={i} event={event} />
         ))}
