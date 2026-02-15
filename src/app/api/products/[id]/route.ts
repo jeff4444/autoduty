@@ -12,7 +12,8 @@ async function handler(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const product = products.find((p) => p.id === parseInt((params as any).id, 10));
+  const { id } = await params;
+  const product = products.find((p) => p.id === parseInt(id, 10));
 
   if (!product) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });

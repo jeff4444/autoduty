@@ -68,7 +68,7 @@ export async function reportError(report: ErrorReport): Promise<void> {
  * @param relatedFiles Optional array of related file paths that may also be relevant to bugs
  */
 export function withAutoduty(
-  handler: (request: Request) => Promise<Response>,
+  handler: (request: Request, context?: any) => Promise<Response>,
   sourceFile: string,
   relatedFiles: string[] = []
 ) {
@@ -76,9 +76,9 @@ export function withAutoduty(
   const sourceCode = readSourceFile(sourceFile);
   const related = relatedFiles.map((f) => ({ path: f, content: readSourceFile(f) }));
 
-  return async (request: Request): Promise<Response> => {
+  return async (request: Request, context?: any): Promise<Response> => {
     try {
-      const response = await handler(request);
+      const response = await handler(request, context);
 
       // If the handler returned a 5xx, report it
       if (response.status >= 500) {
