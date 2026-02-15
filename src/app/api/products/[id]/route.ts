@@ -1,22 +1,31 @@
 /**
  * API Route: GET /api/products/[id]
  *
- * Returns a single product by ID. This endpoint works correctly.
+ * Returns a single product by ID with formatted pricing.
  */
 
 import { NextResponse } from "next/server";
 import { products } from "@/lib/products";
+import { withAutoduty } from "@/lib/error-reporter";
 
-export async function GET(
+async function handler(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const product = products.find((p) => p.id === parseInt(id, 10));
+  const product = products.find((p) => p.id === parseInt((params as any).id, 10));
 
   if (!product) {
     return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ product });
+  return NextResponse.json({
+    product: {
+      ...product,
+      priceFormatted: `$${product.price.toFixed(2)}`,
+    },
+  });
 }
+
+export const GET = withAutoduty(handler, "src/app/api/products/[id]/route.ts", [
+  "src/lib/products.ts",
+]);

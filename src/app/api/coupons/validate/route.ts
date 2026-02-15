@@ -2,16 +2,6 @@
  * API Route: POST /api/coupons/validate
  *
  * Validates a coupon code and returns the discounted total.
- *
- * MULTI-FILE BUG: The route passes the raw coupon code string to
- * `applyDiscount()` instead of looking up the discount object first.
- * `applyDiscount()` in `lib/pricing.ts` expects `{ type, value }` but
- * receives a string like "SAVE10", causing:
- * TypeError: Cannot read properties of undefined (reading 'type')
- *
- * Fix requires editing TWO files:
- * 1. `src/app/api/coupons/validate/route.ts` — look up COUPON_CODES[code] before passing
- * 2. `src/lib/pricing.ts` — add input validation in applyDiscount
  */
 
 import { NextResponse } from "next/server";
@@ -39,8 +29,6 @@ async function handler(request: Request) {
     );
   }
 
-  // BUG: Passes `upperCode` (a string) instead of `COUPON_CODES[upperCode]` (the discount object).
-  // applyDiscount expects { type, value } but gets "SAVE10".
   const discountedTotal = applyDiscount(subtotal, upperCode as unknown as { type: "percentage" | "flat"; value: number });
 
   return NextResponse.json({

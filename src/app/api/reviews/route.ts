@@ -2,13 +2,6 @@
  * API Route: GET /api/reviews?productId=X
  *
  * Returns reviews for a product.
- *
- * BUG: The code sorts reviews by `review.date` using `.getTime()`, but `date`
- * is a string ("2024-01-15"), not a Date object. Calling `.getTime()` on a
- * string throws: TypeError: review.date.getTime is not a function.
- *
- * This is a classic bug — the developer assumed the dates were Date objects
- * but the mock data has ISO date strings.
  */
 
 import { NextResponse } from "next/server";
@@ -20,7 +13,7 @@ interface Review {
   author: string;
   rating: number;
   comment: string;
-  date: string;       // This is a string, but the code treats it as Date
+  date: string;
   verified: boolean;
 }
 
@@ -41,8 +34,6 @@ async function handler(request: Request) {
 
   const productReviews = reviews.filter((r) => r.productId === productId);
 
-  // BUG: `review.date` is a string like "2024-12-15", not a Date object.
-  // Calling `.getTime()` on a string throws TypeError.
   const sorted = productReviews.sort((a, b) => {
     return (b.date as unknown as Date).getTime() - (a.date as unknown as Date).getTime();
   });

@@ -1,11 +1,5 @@
 /**
  * Shared constants used across the application.
- *
- * BUG: EMAIL_REGEX is missing the `+` quantifier after `[a-zA-Z0-9._%\\-]`.
- * As written, it only matches emails where the local part is exactly 1 character.
- * "a@example.com" passes but "john@example.com" fails.
- *
- * The correct regex should be: /^[a-zA-Z0-9._%\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$/
  */
 
 export const EMAIL_REGEX = /^[a-zA-Z0-9._%\-]@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
