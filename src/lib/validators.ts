@@ -13,7 +13,7 @@
 import { EMAIL_REGEX } from "./constants";
 
 export function isValidEmail(email: string): boolean {
-  // BUG: doesn't guard against null/undefined — and the regex from constants.ts is broken
+  if (!email) return false;
   return EMAIL_REGEX.test(email);
 }
 
