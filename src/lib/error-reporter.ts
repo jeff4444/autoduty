@@ -3,6 +3,9 @@
  * to the AutoDuty backend for autonomous remediation.
  */
 
+import { readFileSync } from "fs";
+import { join } from "path";
+
 const AUTODUTY_API = process.env.AUTODUTY_BACKEND_URL || "http://localhost:5001";
 const REPO_URL = process.env.GITHUB_REPO_URL || "https://github.com/your-username/autoduty";
 
@@ -11,8 +14,22 @@ export interface ErrorReport {
   traceback: string;
   logs: string[];
   source_file: string;
+  source_code: string;
   repo_url: string;
   branch: string;
+}
+
+/**
+ * Read the source file from disk so we can send it to the backend.
+ * This runs server-side in Next.js API routes.
+ */
+function readSourceFile(relPath: string): string {
+  try {
+    const fullPath = join(process.cwd(), relPath);
+    return readFileSync(fullPath, "utf-8");
+  } catch {
+    return "";
+  }
 }
 
 export async function reportError(report: ErrorReport): Promise<void> {
@@ -45,6 +62,9 @@ export function withAutoduty(
   handler: (request: Request) => Promise<Response>,
   sourceFile: string
 ) {
+  // Read source code once at import time (server-side)
+  const sourceCode = readSourceFile(sourceFile);
+
   return async (request: Request): Promise<Response> => {
     try {
       const response = await handler(request);
@@ -57,6 +77,7 @@ export function withAutoduty(
           traceback: body,
           logs: [`[${new Date().toISOString()}] ${request.method} ${request.url} -> ${response.status}`],
           source_file: sourceFile,
+          source_code: sourceCode,
           repo_url: REPO_URL,
           branch: "main",
         });
@@ -75,6 +96,7 @@ export function withAutoduty(
           traceback,
         ],
         source_file: sourceFile,
+        source_code: sourceCode,
         repo_url: REPO_URL,
         branch: "main",
       });
